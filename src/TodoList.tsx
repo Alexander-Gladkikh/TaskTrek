@@ -23,6 +23,7 @@ export function TodoList(props: PropsType) {
         setTitle('')
     }
 
+
     return (
         <div>
             <h3>{props.title}</h3>
@@ -30,7 +31,11 @@ export function TodoList(props: PropsType) {
                 <input
                     value={title}
                     onChange={(e) => setTitle(e.currentTarget.value)}
-                    onKeyPress={}
+                    onKeyPress={(event) => {
+                        if (event.charCode === 13) {
+                            addTaskHandler()
+                        }
+                    }}
                 />
                 <button onClick={addTaskHandler}>+</button>
             </div>
