@@ -9,11 +9,11 @@ function App() {
 
     let [tasks, setTasks] = useState(
         [
-            { id: v1(), title: "HTML&CSS", isDone: true },
-            { id: v1(), title: "JS", isDone: true },
-            { id: v1(), title: "ReactJS", isDone: false },
-            { id: v1(), title: "REST API", isDone: false },
-            { id: v1(), title: "GraphQl", isDone: false }
+            {id: v1(), title: "HTML&CSS", isDone: true},
+            {id: v1(), title: "JS", isDone: true},
+            {id: v1(), title: "ReactJS", isDone: false},
+            {id: v1(), title: "REST API", isDone: false},
+            {id: v1(), title: "GraphQl", isDone: false}
         ]
     )
 
@@ -22,8 +22,17 @@ function App() {
     }
 
     const addTask = (taskTitle: string) => {
-        let newTask = {id: v1(), title: taskTitle, isDone: false}
-        setTasks([newTask, ...tasks])
+            let newTask = {id: v1(), title: taskTitle, isDone: false}
+            setTasks([newTask, ...tasks])
+        }
+
+
+    const changeTaskStatus = (taskId: string, newStatus: boolean) => {
+        let task = tasks.find(task => task.id === taskId)
+        if (task) {
+            task.isDone = newStatus
+            setTasks([...tasks])
+        }
     }
 
     let [filter, setFilter] = useState<FilterValueType>('all')
@@ -44,13 +53,15 @@ function App() {
 
     return (
         <div className="App">
-           <TodoList
-               title={'What to learn'}
-               task={taskForTodolist}
-               removeTask={removeTask}
-               changeFilter={changeFilter}
-               addTask={addTask}
-           />
+            <TodoList
+                title={'What to learn'}
+                task={taskForTodolist}
+                removeTask={removeTask}
+                changeFilter={changeFilter}
+                addTask={addTask}
+                changeTaskStatus={changeTaskStatus}
+                filter={filter}
+            />
         </div>
     );
 }
