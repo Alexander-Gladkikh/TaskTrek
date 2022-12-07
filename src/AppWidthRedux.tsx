@@ -13,6 +13,8 @@ import {
     todolistsReducer
 } from "./state/todolists-reducer";
 import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC, tasksReducer} from "./state/tasks-reducer";
+import {AppRootStateType} from "./state/store";
+import {useDispatch, useSelector} from "react-redux";
 
 export type FilterValueType = 'all' | 'active' | 'completed'
 export type TodolistType = {
@@ -26,64 +28,65 @@ export type TasksStateType = {
 }
 
 
-function AppWidthReducer() {
+function AppWidthRedux() {
 
     let todolistID1 = v1()
     let todolistID2 = v1()
 
-    let [todolists, dispatchToTodolist] = useReducer<Reducer<TodolistType[], any>>(todolistsReducer, [
-        {id: todolistID1, title: 'What to learn', filter: 'all'},
-        {id: todolistID2, title: 'What to buy', filter: 'all'}
-    ])
+    // let [todolists, dispatchToTodolist] = useReducer<Reducer<TodolistType[], any>>(todolistsReducer, [
+    //     {id: todolistID1, title: 'What to learn', filter: 'all'},
+    //     {id: todolistID2, title: 'What to buy', filter: 'all'}
+    // ])
+    //
+    // let [tasks, dispatchToTasks] = useReducer<Reducer<TasksStateType, any>>(tasksReducer, {
+    //     [todolistID1]: [
+    //         {id: v1(), title: 'HTML&CSS', isDone: true},
+    //         {id: v1(), title: 'JS', isDone: true},
+    //         {id: v1(), title: 'ReactJS', isDone: false},
+    //
+    //     ],
+    //     [todolistID2]: [
+    //         {id: v1(), title: 'Rest API', isDone: true},
+    //         {id: v1(), title: 'GraphQL', isDone: false},
+    //     ]
+    // })
 
-    let [tasks, dispatchToTasks] = useReducer(tasksReducer, {
-        [todolistID1]: [
-            {id: v1(), title: 'HTML&CSS', isDone: true},
-            {id: v1(), title: 'JS', isDone: true},
-            {id: v1(), title: 'ReactJS', isDone: false},
-
-        ],
-        [todolistID2]: [
-            {id: v1(), title: 'Rest API', isDone: true},
-            {id: v1(), title: 'GraphQL', isDone: false},
-        ]
-    })
+    const todolists = useSelector<AppRootStateType, TodolistType[]>(state => state.todolists)
+    const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
+    const dispatch = useDispatch()
 
     const removeTask = (taskId: string, todolistId: string) => {
-        dispatchToTasks(removeTaskAC(taskId, todolistId))
+        dispatch(removeTaskAC(taskId, todolistId))
     }
 
     const addTask = (taskTitle: string, todolistId: string) => {
-        dispatchToTasks(addTaskAC(taskTitle, todolistId))
+        dispatch(addTaskAC(taskTitle, todolistId))
     }
 
     const changeTaskStatus = (taskId: string, newStatus: boolean, todolistId: string) => {
-        dispatchToTasks(changeTaskStatusAC(taskId, newStatus, todolistId))
+        dispatch(changeTaskStatusAC(taskId, newStatus, todolistId))
     }
     const onChangeTaskTitle = (tasksId: string, newTitle: string, todolistId: string) => {
-        dispatchToTasks(changeTaskTitleAC(tasksId, newTitle, todolistId))
+        dispatch(changeTaskTitleAC(tasksId, newTitle, todolistId))
 
     }
     const changeFilter = (value: FilterValueType, todolistId: string) => {
-        dispatchToTodolist(changeTodolistFilterAC(todolistId, value))
+        dispatch(changeTodolistFilterAC(todolistId, value))
     }
 
 
     const removeTodolist = (todolistId: string) => {
-        dispatchToTodolist(removeTodolistAC(todolistId))
-        dispatchToTasks(removeTodolistAC(todolistId))
+        dispatch(removeTodolistAC(todolistId))
     }
 
 
     const addTodolist = (title: string) => {
-        let action = addTodolistAC(title)
-        dispatchToTasks(action)
-        dispatchToTodolist(action)
+        dispatch(addTodolistAC(title))
     }
 
 
     const onChangeTodolistTitle = (newTitle: string, todolistId: string) => {
-        dispatchToTodolist(changeTodolisTitletAC(todolistId, newTitle))
+        dispatch(changeTodolisTitletAC(todolistId, newTitle))
     }
 
 
@@ -147,4 +150,4 @@ function AppWidthReducer() {
     );
 }
 
-export default AppWidthReducer;
+export default AppWidthRedux;

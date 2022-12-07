@@ -16,8 +16,10 @@ export type ChangeTaskTitleActionType = ReturnType<typeof changeTaskTitleAC>
 // и инструкцию (action, тоже объект)
 // согласно прописанному type в этом action (инструкции) я поменяю state
 
+const initialState: TasksStateType = {}
 
-export const tasksReducer = (state: TasksStateType, action: ActionType) => {
+
+export const tasksReducer = (state: TasksStateType = initialState, action: ActionType) => {
 
     switch (action.type) {
         case "REMOVE-TASK":
@@ -51,7 +53,7 @@ export const tasksReducer = (state: TasksStateType, action: ActionType) => {
             return copyState
 
         default:
-            throw new Error('I don\'t understand this type')
+            return state
     }
 }
 

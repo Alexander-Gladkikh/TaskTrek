@@ -1,11 +1,14 @@
-import {FilterValueType, TodolistType} from "../App";
+import {FilterValueType, TasksStateType, TodolistType} from "../App";
 import {v1} from "uuid";
 
 type ActionType = RemoveTodolistActionType | AddTodolistActionType | ChangeTodolistTitleActionType | ChangeTodolistFilterActionType;
 // меня вызовут и дадут мне стейт (почти всегда объект)
 // и инструкцию (action, тоже объект)
 // согласно прописанному type в этом action (инструкции) я поменяю state
-export const todolistsReducer = (state: TodolistType[], action: ActionType) => {
+
+const initialState: TodolistType[] = []
+
+export const todolistsReducer = (state: TodolistType[] = initialState, action: ActionType) => {
 
     const stateCopy = [...state]
 
@@ -25,7 +28,7 @@ export const todolistsReducer = (state: TodolistType[], action: ActionType) => {
             return stateCopy.map(tl => tl.id === action.id ? {...tl, filter: action.filter} : tl)
 
         default:
-            throw new Error('I don\'t understand this type')
+            return state
     }
 }
 
