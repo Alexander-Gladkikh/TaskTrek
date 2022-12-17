@@ -1,6 +1,6 @@
 import {FilterValueType, TasksStateType, TodolistType} from "../AppWidthRedux";
 import {v1} from "uuid";
-import {AddTodolistActionType, RemoveTodolistActionType} from "./todolists-reducer";
+import {AddTodolistActionType, RemoveTodolistActionType, setTodolistsActionType} from "./todolists-reducer";
 
 export type RemoveTaskActionType = ReturnType<typeof removeTaskAC>
 export type AddTaskActionType = ReturnType<typeof addTaskAC>
@@ -11,7 +11,7 @@ export type ChangeTaskTitleActionType = ReturnType<typeof changeTaskTitleAC>
 
  type ActionType = RemoveTaskActionType | AddTaskActionType |
      ChangeTaskStatusActionType | ChangeTaskTitleActionType |
-     AddTodolistActionType | RemoveTodolistActionType
+     AddTodolistActionType | RemoveTodolistActionType | setTodolistsActionType
 // меня вызовут и дадут мне стейт (почти всегда объект)
 // и инструкцию (action, тоже объект)
 // согласно прописанному type в этом action (инструкции) я поменяю state
@@ -22,36 +22,54 @@ const initialState: TasksStateType = {}
 export const tasksReducer = (state: TasksStateType = initialState, action: ActionType) => {
 
     switch (action.type) {
-        case "REMOVE-TASK":
-           return {
-               ...state,
-               [action.todolistId]: state[action.todolistId].filter(task => task.id !== action.taskId)
-           }
-        case "ADD-TASK":
+        case "REMOVE-TASK": {
             return {
                 ...state,
-                [action.todolistId]:[{id: v1(), title: action.title, isDone: false},...state[action.todolistId]]
+                [action.todolistId]: state[action.todolistId].filter(task => task.id !== action.taskId)
             }
-        case "CHANGE-TASK-STATUS":
+        }
+        case "ADD-TASK": {
             return {
                 ...state,
-                [action.todolistId]:[...state[action.todolistId].map(task => task.id === action.taskId ? {...task, isDone: action.isDone} : task)]
+                [action.todolistId]: [{id: v1(), title: action.title, isDone: false}, ...state[action.todolistId]]
             }
-        case "CHANGE-TASK-TITLE":
+        }
+        case "CHANGE-TASK-STATUS": {
             return {
                 ...state,
-                [action.todolistId]:[...state[action.todolistId].map(task => task.id === action.taskId ? {...task, title: action.title} : task)]
+                [action.todolistId]: [...state[action.todolistId].map(task => task.id === action.taskId ? {
+                    ...task,
+                    isDone: action.isDone
+                } : task)]
             }
-        case "ADD-TODOLIST":
+        }
+        case "CHANGE-TASK-TITLE": {
+            return {
+                ...state,
+                [action.todolistId]: [...state[action.todolistId].map(task => task.id === action.taskId ? {
+                    ...task,
+                    title: action.title
+                } : task)]
+            }
+        }
+        case "ADD-TODOLIST": {
             return {
                 ...state,
                 [action.todolistId]: []
             }
-        case "REMOVE-TODOLIST":
+        }
+        case "REMOVE-TODOLIST": {
             let copyState = {...state}
             delete copyState[action.todolistId]
             return copyState
-
+        }
+        case "SET-TODOS": {
+            let copyState = {...state}
+            action.todolists.forEach((tl) => {
+                copyState[tl.id] = []
+            })
+            return copyState
+        }
         default:
             return state
     }

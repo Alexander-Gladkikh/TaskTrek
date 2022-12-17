@@ -1,7 +1,6 @@
-import React, {Reducer, useCallback, useReducer, useState} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import './App.css';
 import {TaskType, TodoList} from "./TodoList";
-import {v1} from "uuid";
 import {AddItemForm} from "./AddItemForm";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
@@ -9,12 +8,12 @@ import {
     addTodolistAC,
     changeTodolistFilterAC,
     changeTodolisTitletAC,
-    removeTodolistAC,
-    todolistsReducer
+    removeTodolistAC, setTodolists,
 } from "./state/todolists-reducer";
 import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC, tasksReducer} from "./state/tasks-reducer";
 import {AppRootStateType} from "./state/store";
 import {useDispatch, useSelector} from "react-redux";
+import {todolistAPI} from "./api/todolist-api";
 
 export type FilterValueType = 'all' | 'active' | 'completed'
 export type TodolistType = {
@@ -29,27 +28,6 @@ export type TasksStateType = {
 
 
 function AppWidthRedux() {
-
-    let todolistID1 = v1()
-    let todolistID2 = v1()
-
-    // let [todolists, dispatchToTodolist] = useReducer<Reducer<TodolistType[], any>>(todolistsReducer, [
-    //     {id: todolistID1, title: 'What to learn', filter: 'all'},
-    //     {id: todolistID2, title: 'What to buy', filter: 'all'}
-    // ])
-    //
-    // let [tasks, dispatchToTasks] = useReducer<Reducer<TasksStateType, any>>(tasksReducer, {
-    //     [todolistID1]: [
-    //         {id: v1(), title: 'HTML&CSS', isDone: true},
-    //         {id: v1(), title: 'JS', isDone: true},
-    //         {id: v1(), title: 'ReactJS', isDone: false},
-    //
-    //     ],
-    //     [todolistID2]: [
-    //         {id: v1(), title: 'Rest API', isDone: true},
-    //         {id: v1(), title: 'GraphQL', isDone: false},
-    //     ]
-    // })
 
     const todolists = useSelector<AppRootStateType, TodolistType[]>(state => state.todolists)
     const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
@@ -81,6 +59,12 @@ function AppWidthRedux() {
         dispatch(changeTodolisTitletAC(todolistId, newTitle))
     },[])
 
+    useEffect(() => {
+        todolistAPI.getTodolist()
+            .then((res) => {
+                dispatch(setTodolists(res.data.data))
+            })
+    },[])
 
     return (
         <div className="App">

@@ -14,10 +14,6 @@ export type ResponseType<D> = {
     data: D
 }
 
-
-
-
-
 const instance = axios.create({
     baseURL: 'https://social-network.samuraijs.com/api/1.1',
     withCredentials: true,
@@ -29,7 +25,7 @@ const instance = axios.create({
 
 export const todolistAPI = {
     getTodolist() {
-        const promise = instance.get<ResponseType<{}>>('/todo-lists')
+        const promise = instance.get<ResponseType<[]>>('/todo-lists')
         return promise
     },
     createTodolist(title: string) {
