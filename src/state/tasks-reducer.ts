@@ -1,17 +1,23 @@
 import {FilterValueType, TasksStateType, TodolistType} from "../AppWidthRedux";
 import {v1} from "uuid";
 import {AddTodolistActionType, RemoveTodolistActionType, setTodolistsActionType} from "./todolists-reducer";
+import {Dispatch} from "redux";
+import {taskAPI, todolistAPI} from "../api/todolist-api";
+import {TaskType} from "../TodoList";
 
 export type RemoveTaskActionType = ReturnType<typeof removeTaskAC>
 export type AddTaskActionType = ReturnType<typeof addTaskAC>
 export type ChangeTaskStatusActionType = ReturnType<typeof changeTaskStatusAC>
 export type ChangeTaskTitleActionType = ReturnType<typeof changeTaskTitleAC>
+export type setTasksActionType = ReturnType<typeof setTasksAC>
+
 
 
 
  type ActionType = RemoveTaskActionType | AddTaskActionType |
      ChangeTaskStatusActionType | ChangeTaskTitleActionType |
-     AddTodolistActionType | RemoveTodolistActionType | setTodolistsActionType
+     AddTodolistActionType | RemoveTodolistActionType | setTodolistsActionType |
+     setTasksActionType
 // меня вызовут и дадут мне стейт (почти всегда объект)
 // и инструкцию (action, тоже объект)
 // согласно прописанному type в этом action (инструкции) я поменяю state
@@ -70,6 +76,13 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
             })
             return copyState
         }
+        case "SET-TASKS": {
+            return {
+                ...state,
+                [action.todolistId]: action.tasks
+            }
+        }
+
         default:
             return state
     }
@@ -86,6 +99,17 @@ export const changeTaskStatusAC = (taskId: string, isDone:boolean, todolistId: s
 }
 export const changeTaskTitleAC = (taskId: string, title:string, todolistId: string)  => {
     return {type: 'CHANGE-TASK-TITLE', taskId, title, todolistId} as const
+}
+
+export const setTasksAC = (tasks: TaskType[], todolistId:string) => {
+    return {type: 'SET-TASKS', tasks, todolistId} as const
+}
+
+export const getTasksTC = (todolistId: string) => (dispatch: Dispatch) => {
+    taskAPI.getTask(todolistId)
+        .then((res) => {
+            dispatch(setTasksAC(res.data.items, todolistId))
+        })
 }
 
 

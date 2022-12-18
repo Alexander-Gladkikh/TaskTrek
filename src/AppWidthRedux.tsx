@@ -7,7 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {
     addTodolistAC,
     changeTodolistFilterAC,
-    changeTodolisTitletAC, getTodolistThunk,
+    changeTodolisTitletAC, getTodolistTC,
     removeTodolistAC,
 } from "./state/todolists-reducer";
 import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "./state/tasks-reducer";
@@ -60,7 +60,7 @@ function AppWidthRedux() {
     }, [])
 
     useEffect(() => {
-        dispatch(getTodolistThunk)
+        dispatch(getTodolistTC())
     }, [])
 
     return (
