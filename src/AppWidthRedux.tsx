@@ -11,7 +11,7 @@ import {
     removeTodolistAC,
 } from "./state/todolists-reducer";
 import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "./state/tasks-reducer";
-import {AppRootStateType, useAppDispatch} from "./state/store";
+import {AppRootStateType, useAppDispatch, useAppSelector} from "./state/store";
 import {useDispatch, useSelector} from "react-redux";
 
 
@@ -29,8 +29,8 @@ export type TasksStateType = {
 
 function AppWidthRedux() {
 
-    const todolists = useSelector<AppRootStateType, TodolistType[]>(state => state.todolists)
-    const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
+    const todolists = useAppSelector<TodolistType[]>(state => state.todolists)
+    const tasks = useAppSelector<TasksStateType>(state => state.tasks)
     const dispatch = useAppDispatch()
 
     const removeTask = useCallback((taskId: string, todolistId: string) => {
