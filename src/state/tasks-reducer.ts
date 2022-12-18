@@ -37,7 +37,7 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
         case "ADD-TASK": {
             return {
                 ...state,
-                [action.todolistId]: [{id: v1(), title: action.title, isDone: false}, ...state[action.todolistId]]
+                [action.task.todolistId]: [action.task, ...state[action.task.todolistId]]
             }
         }
         case "CHANGE-TASK-STATUS": {
@@ -91,8 +91,9 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
 export const removeTaskAC = (taskId: string, todolistId: string) => {
     return {type: "REMOVE-TASK", taskId, todolistId} as const
 }
-export const addTaskAC = (title: string, todolistId: string)  => {
-    return {type: "ADD-TASK", title, todolistId} as const
+                         // TaskType
+export const addTaskAC = (task: any)  => {
+    return {type: "ADD-TASK", task} as const
 }
 export const changeTaskStatusAC = (taskId: string, isDone:boolean, todolistId: string) => {
     return {type: "CHANGE-TASK-STATUS", taskId, isDone,todolistId} as const
@@ -109,6 +110,26 @@ export const getTasksTC = (todolistId: string) => (dispatch: Dispatch) => {
     taskAPI.getTask(todolistId)
         .then((res) => {
             dispatch(setTasksAC(res.data.items, todolistId))
+        })
+}
+
+export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: Dispatch) => {
+    taskAPI.deleteTask(todolistId, taskId)
+        .then((res) => {
+            console.log(res.data.resultCode)
+            if(res.data.resultCode === 0) {
+                dispatch(removeTaskAC(taskId, todolistId))
+            }
+        })
+        .catch((e) => {
+        console.log(e.message)
+    })
+}
+
+export const addTaskTC = (todolistId: string, title: string) => (dispatch: Dispatch) => {
+    taskAPI.createTask(todolistId, title)
+        .then((res) => {
+            dispatch(addTaskAC(res.data.data.item))
         })
 }
 
