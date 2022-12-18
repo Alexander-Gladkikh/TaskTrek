@@ -1,6 +1,7 @@
 import {FilterValueType, TasksStateType, TodolistType} from "../AppWidthRedux";
 import {v1} from "uuid";
-import {ResponseType} from "../api/todolist-api";
+import {ResponseType, todolistAPI} from "../api/todolist-api";
+import {Dispatch} from "redux";
 
 type ActionType = RemoveTodolistActionType |
     AddTodolistActionType |
@@ -61,5 +62,13 @@ export const changeTodolistFilterAC = (id: string, filter: FilterValueType) => {
 
 export const setTodolists = (todolists: TodolistType[]) => {
     return {type: "SET-TODOS", todolists} as const
+}
+
+export const getTodolistThunk = (dispatch: Dispatch) => {
+    todolistAPI.getTodolist()
+        .then((res) => {
+            dispatch(setTodolists(res.data))
+        })
+
 }
 
