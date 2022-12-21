@@ -1,10 +1,8 @@
-import {FilterValueType, TasksStateType, TodolistType} from "../AppWidthRedux";
-import {v1} from "uuid";
 import {AddTodolistActionType, RemoveTodolistActionType, setTodolistsActionType} from "./todolists-reducer";
 import {Dispatch} from "redux";
-import {taskAPI, todolistAPI} from "../api/todolist-api";
-import {TaskType} from "../TodoList";
+import {taskAPI, TaskStatuses, TaskType, UpdateTaskModelType} from "../api/todolist-api";
 import {AppRootStateType} from "./store";
+import {TasksStateType} from "../AppWidthRedux";
 
 export type RemoveTaskActionType = ReturnType<typeof removeTaskAC>
 export type AddTaskActionType = ReturnType<typeof addTaskAC>
@@ -26,7 +24,7 @@ export type setTasksActionType = ReturnType<typeof setTasksAC>
 const initialState: TasksStateType = {}
 
 
-export const tasksReducer = (state: TasksStateType = initialState, action: ActionType) => {
+export const tasksReducer = (state: TasksStateType = initialState, action: ActionType): TasksStateType => {
 
     switch (action.type) {
         case "REMOVE-TASK": {
@@ -38,7 +36,7 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
         case "ADD-TASK": {
             return {
                 ...state,
-                [action.task.todolistId]: [action.task, ...state[action.task.todolistId]]
+                [action.task.todoListId]: [action.task, ...state[action.task.todoListId]]
             }
         }
         case "CHANGE-TASK-STATUS": {
@@ -46,7 +44,7 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
                 ...state,
                 [action.todolistId]: [...state[action.todolistId].map(task => task.id === action.taskId ? {
                     ...task,
-                    isDone: action.isDone
+                    isDone: action.status
                 } : task)]
             }
         }
@@ -92,12 +90,12 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
 export const removeTaskAC = (taskId: string, todolistId: string) => {
     return {type: "REMOVE-TASK", taskId, todolistId} as const
 }
-                         // TaskType
-export const addTaskAC = (task: any)  => {
+
+export const addTaskAC = (task: TaskType)  => {
     return {type: "ADD-TASK", task} as const
 }                                                   // UpdateModalType
-export const changeTaskStatusAC = (taskId: string, isDone:any, todolistId: string) => {
-    return {type: "CHANGE-TASK-STATUS", taskId, isDone,todolistId} as const
+export const changeTaskStatusAC = (taskId: string, status:TaskStatuses, todolistId: string) => {
+    return {type: "CHANGE-TASK-STATUS", taskId, status, todolistId} as const
 }
 export const changeTaskTitleAC = (taskId: string, title:string, todolistId: string)  => {
     return {type: 'CHANGE-TASK-TITLE', taskId, title, todolistId} as const
@@ -132,22 +130,18 @@ export const addTaskTC = (todolistId: string, title: string) => (dispatch: Dispa
         .then((res) => {
             dispatch(addTaskAC(res.data.data.item))
         })
-}                                                                //TaskStatus
-export const updateTaskTC = (todolistId: string, taskId: string, status: any) => (dispatch: Dispatch, getState: () => AppRootStateType) => {
+}
+export const updateTaskTC = (todolistId: string, taskId: string, status: TaskStatuses) => (dispatch: Dispatch, getState: () => AppRootStateType) => {
     const task = getState().tasks[todolistId].find((t) => t.id === taskId)
 
     if(task) {
-        // UpdateModalType
-        const model = {
-            title: task.title,
-            deadline: task.deadline,
-            startDate: task.startDate,
-            priority: task.priority,
-            description: task.description,
-            status: status
+        const model: UpdateTaskModelType = {
+            ...task,
+            status
         }
         taskAPI.updateTaskTitle(todolistId, taskId, model)
             .then((res) => {
+                console.log(res)
                 dispatch(changeTaskStatusAC(taskId, res.data.data.item.status, todolistId))
             })
     }
