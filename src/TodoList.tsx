@@ -10,6 +10,11 @@ import {getTasksTC} from "./state/tasks-reducer";
 
 
 export type TaskType = {
+    status?: any;
+    description?: any;
+    priority?: any;
+    startDate?: any
+    deadline?: any
     id: string
     title: string
     isDone: boolean

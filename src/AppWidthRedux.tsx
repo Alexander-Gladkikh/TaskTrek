@@ -16,7 +16,7 @@ import {
     changeTaskStatusAC,
     changeTaskTitleAC,
     removeTaskAC,
-    removeTaskTC
+    removeTaskTC, updateTaskTC
 } from "./state/tasks-reducer";
 import {AppRootStateType, useAppDispatch, useAppSelector} from "./state/store";
 import {useDispatch, useSelector} from "react-redux";
@@ -45,9 +45,9 @@ function AppWidthRedux() {
     }, [])
     const addTask = useCallback((taskTitle: string, todolistId: string) => {
         dispatch(addTaskTC(todolistId, taskTitle))
-    }, [])
-    const changeTaskStatus = useCallback((taskId: string, newStatus: boolean, todolistId: string) => {
-        dispatch(changeTaskStatusAC(taskId, newStatus, todolistId))
+    }, [])                                                        // UpdateModalType
+    const changeTaskStatus = useCallback((taskId: string, newStatus: any, todolistId: string) => {
+        dispatch(updateTaskTC(taskId, newStatus, todolistId))
     }, [])
     const onChangeTaskTitle = useCallback((tasksId: string, newTitle: string, todolistId: string) => {
         dispatch(changeTaskTitleAC(tasksId, newTitle, todolistId))

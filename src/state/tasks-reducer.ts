@@ -4,6 +4,7 @@ import {AddTodolistActionType, RemoveTodolistActionType, setTodolistsActionType}
 import {Dispatch} from "redux";
 import {taskAPI, todolistAPI} from "../api/todolist-api";
 import {TaskType} from "../TodoList";
+import {AppRootStateType} from "./store";
 
 export type RemoveTaskActionType = ReturnType<typeof removeTaskAC>
 export type AddTaskActionType = ReturnType<typeof addTaskAC>
@@ -94,8 +95,8 @@ export const removeTaskAC = (taskId: string, todolistId: string) => {
                          // TaskType
 export const addTaskAC = (task: any)  => {
     return {type: "ADD-TASK", task} as const
-}
-export const changeTaskStatusAC = (taskId: string, isDone:boolean, todolistId: string) => {
+}                                                   // UpdateModalType
+export const changeTaskStatusAC = (taskId: string, isDone:any, todolistId: string) => {
     return {type: "CHANGE-TASK-STATUS", taskId, isDone,todolistId} as const
 }
 export const changeTaskTitleAC = (taskId: string, title:string, todolistId: string)  => {
@@ -131,6 +132,26 @@ export const addTaskTC = (todolistId: string, title: string) => (dispatch: Dispa
         .then((res) => {
             dispatch(addTaskAC(res.data.data.item))
         })
+}                                                                //TaskStatus
+export const updateTaskTC = (todolistId: string, taskId: string, status: any) => (dispatch: Dispatch, getState: () => AppRootStateType) => {
+    const task = getState().tasks[todolistId].find((t) => t.id === taskId)
+
+    if(task) {
+        // UpdateModalType
+        const model = {
+            title: task.title,
+            deadline: task.deadline,
+            startDate: task.startDate,
+            priority: task.priority,
+            description: task.description,
+            status: status
+        }
+        taskAPI.updateTaskTitle(todolistId, taskId, model)
+            .then((res) => {
+                dispatch(changeTaskStatusAC(taskId, res.data.data.item.status, todolistId))
+            })
+    }
+
 }
 
 

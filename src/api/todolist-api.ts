@@ -56,8 +56,8 @@ export const taskAPI = {
     },
     deleteTask(todolistId: string, taskId: string) {
         return instance.delete(`/todo-lists/${todolistId}/tasks/${taskId}`)
-    },
-    updateTaskTitle(todolistId: string, taskId: string, title: string) {
+    },                                                     // UpdateTaskModuleType
+    updateTaskTitle(todolistId: string, taskId: string, title: any) {
         return instance.put(`/todo-lists/${todolistId}/tasks/${taskId}`, {title: title})
     }
 }
