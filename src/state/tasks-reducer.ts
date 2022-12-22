@@ -44,7 +44,7 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
                 ...state,
                 [action.todolistId]: [...state[action.todolistId].map(task => task.id === action.taskId ? {
                     ...task,
-                    isDone: action.status
+                    status: action.status
                 } : task)]
             }
         }
@@ -133,6 +133,7 @@ export const addTaskTC = (todolistId: string, title: string) => (dispatch: Dispa
 }
 export const updateTaskTC = (todolistId: string, taskId: string, status: TaskStatuses) => (dispatch: Dispatch, getState: () => AppRootStateType) => {
     const task = getState().tasks[todolistId].find((t) => t.id === taskId)
+    console.log(task)
 
     if(task) {
         const model: UpdateTaskModelType = {

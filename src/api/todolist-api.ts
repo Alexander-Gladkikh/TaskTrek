@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, {AxiosResponse} from "axios"
 
 export type TodolistType = {
     id: string
@@ -44,8 +44,8 @@ export type TaskType = {
 export type UpdateTaskModelType = {
     title: string
     description: string
-    status: number
-    priority: number
+    status: TaskStatuses
+    priority: TaskPriorities
     startDate: string
     deadline: string
 }
@@ -94,6 +94,6 @@ export const taskAPI = {
         return instance.delete(`/todo-lists/${todolistId}/tasks/${taskId}`)
     },                                                     // UpdateTaskModuleType
     updateTaskTitle(todolistId: string, taskId: string, model: UpdateTaskModelType) {
-        return instance.put<ResponseType<{ item: TaskType }>>(`/todo-lists/${todolistId}/tasks/${taskId}`, {model})
+        return instance.put(`/todo-lists/${todolistId}/tasks/${taskId}`, model)
     }
 }
