@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect} from 'react';
 import './App.css';
-import {TodoList} from "./TodoList";
-import {AddItemForm} from "./AddItemForm";
+import {TodoList} from "../TodoList";
+import {AddItemForm} from "../api/components/AddItemForm/AddItemForm";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import {
@@ -9,14 +9,14 @@ import {
     changeTodolistFilterAC,
     changeTodolisTitletAC, FilterValueType, getTodolistTC,
     removeTodolistAC, TodolistDomainType,
-} from "./state/todolists-reducer";
+} from "../state/todolists-reducer";
 import {
     addTaskTC,
     changeTaskTitleAC,
     removeTaskTC, updateTaskTC
-} from "./state/tasks-reducer";
-import {useAppDispatch, useAppSelector} from "./state/store";
-import {TaskStatuses, TaskType} from "./api/todolist-api";
+} from "../state/tasks-reducer";
+import {useAppDispatch, useAppSelector} from "../state/store";
+import {TaskStatuses, TaskType} from "../api/todolist-api";
 
 
 

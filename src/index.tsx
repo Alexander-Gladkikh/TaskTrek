@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import AppWidthRedux from "./AppWidthRedux";
+import AppWidthRedux from "./app/AppWidthRedux";
 import {Provider} from "react-redux";
 import {store} from "./state/store";
 
