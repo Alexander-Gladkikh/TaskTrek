@@ -1,13 +1,13 @@
 import React, {useCallback, useEffect} from 'react'
-import {AddItemForm} from "./api/components/AddItemForm/AddItemForm";
-import {EditableSpan} from "./api/components/EditableSpan/EditableSpan";
+import {AddItemForm} from "../../../api/components/AddItemForm/AddItemForm";
+import {EditableSpan} from "../../../api/components/EditableSpan/EditableSpan";
 import {Button, IconButton} from "@mui/material";
 import {Delete} from "@mui/icons-material";
-import {Task} from "./Task";
-import {useAppDispatch} from "./state/store";
-import {getTasksTC} from "./state/tasks-reducer";
-import {TaskStatuses, TaskType} from "./api/todolist-api";
-import {FilterValueType} from "./state/todolists-reducer";
+import {Task} from "./Task/Task";
+import {useAppDispatch} from "../../../app/store";
+import {getTasksTC} from "./tasks-reducer";
+import {TaskStatuses, TaskType} from "../../../api/todolist-api";
+import {FilterValueType} from "./todolists-reducer";
 
 
 type PropsType = {
@@ -27,10 +27,8 @@ type PropsType = {
 export const TodoList = React.memo((props: PropsType) => {
     const dispatch = useAppDispatch();
 
-  //  console.log('Todolist called')
 
     useEffect(() => {
-        console.log('render todolist')
         dispatch(getTasksTC(props.id))
     },[])
 

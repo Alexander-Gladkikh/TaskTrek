@@ -1,31 +1,22 @@
-import React, {useCallback, useEffect} from 'react';
-import './App.css';
-import {TodoList} from "../TodoList";
-import {AddItemForm} from "../api/components/AddItemForm/AddItemForm";
-import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@mui/material";
-import MenuIcon from '@mui/icons-material/Menu';
+import React, {useCallback, useEffect} from "react";
+import {useAppDispatch, useAppSelector} from "../../app/store";
 import {
     addTodolistAC,
     changeTodolistFilterAC,
-    changeTodolisTitletAC, FilterValueType, getTodolistTC,
-    removeTodolistAC, TodolistDomainType,
-} from "../state/todolists-reducer";
-import {
-    addTaskTC,
-    changeTaskTitleAC,
-    removeTaskTC, updateTaskTC
-} from "../state/tasks-reducer";
-import {useAppDispatch, useAppSelector} from "../state/store";
-import {TaskStatuses, TaskType} from "../api/todolist-api";
+    changeTodolisTitletAC,
+    FilterValueType,
+    getTodolistTC,
+    removeTodolistAC,
+    TodolistDomainType
+} from "./Todolist/todolists-reducer";
+import {addTaskTC, changeTaskTitleAC, removeTaskTC, updateTaskTC} from "./Todolist/tasks-reducer";
+import {TaskStatuses} from "../../api/todolist-api";
+import {Grid, Paper} from "@mui/material";
+import {AddItemForm} from "../../api/components/AddItemForm/AddItemForm";
+import {TodoList} from "./Todolist/TodoList";
+import {TasksStateType} from "../../app/App";
 
-
-
-export type TasksStateType = {
-    [key: string]: TaskType[]
-}
-
-
-function AppWidthRedux() {
+export const TodolistsList: React.FC = () => {
 
     const todolists = useAppSelector<TodolistDomainType[]>(state => state.todolists)
     const tasks = useAppSelector<TasksStateType>(state => state.tasks)
@@ -61,33 +52,16 @@ function AppWidthRedux() {
         dispatch(getTodolistTC())
     }, [])
 
-    return (
-        <div className="App">
-            <AppBar position="static">
-                <Toolbar>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{mr: 2}}
-                    >
-                        <MenuIcon/>
-                    </IconButton>
-                    <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
-                        News
-                    </Typography>
-                    <Button color="inherit">Login</Button>
-                </Toolbar>
-            </AppBar>
-            <Container fixed>
-                <Grid container style={{padding: '20px'}}>
-                    <AddItemForm addItem={addTodolist}/>
-                </Grid>
-                <Grid container spacing={3}>
-                    {todolists.map(tl => {
 
-                        return <Grid item>
+    return (
+        <><Grid container style={{padding: '20px'}}>
+            <AddItemForm addItem={addTodolist}/>
+        </Grid>
+            <Grid container spacing={3}>
+                {todolists.map(tl => {
+
+                    return (
+                        <Grid item>
                             <Paper style={{padding: '10px'}}>
                                 <TodoList
                                     key={tl.id}
@@ -101,16 +75,11 @@ function AppWidthRedux() {
                                     removeTodolist={removeTodolist}
                                     onChangeTaskTitle={onChangeTaskTitle}
                                     onChangeTodolistTitle={onChangeTodolistTitle}
-                                    filter={tl.filter}
-                                />
+                                    filter={tl.filter}/>
                             </Paper>
-                        </Grid>
+                        </Grid>);
 
-                    })}
-                </Grid>
-            </Container>
-        </div>
-    );
+                })}
+            </Grid></>
+    )
 }
-
-export default AppWidthRedux;
