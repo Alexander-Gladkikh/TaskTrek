@@ -9,7 +9,11 @@ import {
     removeTodolistAC,
     TodolistDomainType
 } from "./Todolist/todolists-reducer";
-import {addTaskTC, changeTaskTitleAC, removeTaskTC, updateTaskTC} from "./Todolist/tasks-reducer";
+import {
+    addTaskTC,
+    removeTaskTC,
+    updateTaskTC
+} from "./Todolist/tasks-reducer";
 import {TaskStatuses} from "../../api/todolist-api";
 import {Grid, Paper} from "@mui/material";
 import {AddItemForm} from "../../api/components/AddItemForm/AddItemForm";
@@ -22,19 +26,26 @@ export const TodolistsList: React.FC = () => {
     const tasks = useAppSelector<TasksStateType>(state => state.tasks)
     const dispatch = useAppDispatch()
 
+    useEffect(() => {
+        dispatch(getTodolistTC())
+    }, [])
+
+
     const removeTask = useCallback((taskId: string, todolistId: string) => {
         dispatch(removeTaskTC(todolistId, taskId))
     }, [])
     const addTask = useCallback((taskTitle: string, todolistId: string) => {
         dispatch(addTaskTC(todolistId, taskTitle))
     }, [])                                                        // UpdateModalType
-    const changeTaskStatus = useCallback((taskId: string, newStatus: TaskStatuses, todolistId: string) => {
-        dispatch(updateTaskTC(todolistId, taskId, newStatus))
+    const changeTaskStatus = useCallback((taskId: string, status: TaskStatuses, todolistId: string) => {
+        dispatch(updateTaskTC(todolistId, taskId, {status}))
     }, [])
-    const onChangeTaskTitle = useCallback((tasksId: string, newTitle: string, todolistId: string) => {
-        dispatch(changeTaskTitleAC(tasksId, newTitle, todolistId))
 
+    const changeTaskTitle = useCallback((taskId: string, newTitle: string, todolistId: string) => {
+        dispatch(updateTaskTC(todolistId, taskId, {title: newTitle}))
     }, [])
+
+
     const changeFilter = useCallback((value: FilterValueType, todolistId: string) => {
         dispatch(changeTodolistFilterAC(todolistId, value))
     }, [])
@@ -48,9 +59,7 @@ export const TodolistsList: React.FC = () => {
         dispatch(changeTodolisTitletAC(todolistId, newTitle))
     }, [])
 
-    useEffect(() => {
-        dispatch(getTodolistTC())
-    }, [])
+
 
 
     return (
@@ -72,8 +81,8 @@ export const TodolistsList: React.FC = () => {
                                     changeFilter={changeFilter}
                                     addTask={addTask}
                                     changeTaskStatus={changeTaskStatus}
+                                    onChangeTaskTitle={changeTaskTitle}
                                     removeTodolist={removeTodolist}
-                                    onChangeTaskTitle={onChangeTaskTitle}
                                     onChangeTodolistTitle={onChangeTodolistTitle}
                                     filter={tl.filter}/>
                             </Paper>
