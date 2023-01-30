@@ -1,9 +1,15 @@
 import React from 'react';
 import './App.css';
-import {AppBar, Button, Container, IconButton, Toolbar, Typography} from "@mui/material";
+import AppBar from '@mui/material/AppBar';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography'
 import MenuIcon from '@mui/icons-material/Menu';
 import {TaskType} from "../api/todolist-api";
 import {TodolistsList} from "../features/TodolistsList/Todolists";
+import LinearProgress from "@mui/material/LinearProgress";
 
 
 export type TasksStateType = {
@@ -32,9 +38,10 @@ function App() {
                     </Typography>
                     <Button color="inherit">Login</Button>
                 </Toolbar>
+                <LinearProgress color={"secondary"}/>
             </AppBar>
             <Container fixed>
-     <TodolistsList />
+                <TodolistsList/>
             </Container>
         </div>
     );
