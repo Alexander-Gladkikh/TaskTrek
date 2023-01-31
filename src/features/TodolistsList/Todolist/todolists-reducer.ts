@@ -1,11 +1,13 @@
 import {todolistAPI, TodolistType} from "../../../api/todolist-api";
 import {Dispatch} from "redux";
+import {setStatus, setStatusType} from "../../../app/app-reducer";
 
 type ActionType = RemoveTodolistActionType |
     AddTodolistActionType |
     ChangeTodolistTitleActionType |
     ChangeTodolistFilterActionType |
-    setTodolistsActionType;
+    setTodolistsActionType
+    | setStatusType;
 // меня вызовут и дадут мне стейт (почти всегда объект)
 // и инструкцию (action, тоже объект)
 // согласно прописанному type в этом action (инструкции) я поменяю state
@@ -62,35 +64,44 @@ export const setTodolists = (todolists: TodolistType[]) =>
 
 // thunks
 export const getTodolistTC = () => (dispatch: Dispatch<ActionType>) => {
+    dispatch(setStatus('loading'))
     todolistAPI.getTodolist()
         .then((res) => {
             dispatch(setTodolists(res.data))
+            dispatch(setStatus('succeeded'))
         })
 }
 
 export const removeTodolistTC = (todolistId: string) => (dispatch: Dispatch<ActionType>) => {
+    dispatch(setStatus('loading'))
     todolistAPI.deleteTodolist(todolistId)
         .then((res) => {
             if (res.data.resultCode === 0) {
                 dispatch(removeTodolistAC(todolistId))
+                dispatch(setStatus('succeeded'))
             }
         })
+
         .catch(e => {
             console.log(e.message)
         })
 }
 
 export const addTodolistTC = (title: string) => (dispatch: Dispatch<ActionType>) => {
+    dispatch(setStatus('loading'))
     todolistAPI.createTodolist(title)
         .then(res => {
             dispatch(addTodolistAC(res.data.data.item))
+            dispatch(setStatus('succeeded'))
         })
 }
 
 export const changeTodolistTitleTC = (newTitle: string, todolistId: string) => (dispatch: Dispatch<ActionType>) => {
+    dispatch(setStatus('loading'))
     todolistAPI.updateTodolist(todolistId, newTitle)
         .then(res => {
             dispatch(changeTodolisTitletAC(todolistId, newTitle))
+            dispatch(setStatus('succeeded'))
         })
 }
 

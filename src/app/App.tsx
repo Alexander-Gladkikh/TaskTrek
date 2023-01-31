@@ -10,6 +10,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {TaskType} from "../api/todolist-api";
 import {TodolistsList} from "../features/TodolistsList/Todolists";
 import LinearProgress from "@mui/material/LinearProgress";
+import {useSelector} from "react-redux";
+import {useAppSelector} from "./store";
+import {ErrorSnackbar} from "../api/components/ErrorSnackbar/ErrorSnackbar";
 
 
 export type TasksStateType = {
@@ -18,10 +21,12 @@ export type TasksStateType = {
 
 
 function App() {
+    const status =useAppSelector((state) => state.app.status)
 
 
     return (
         <div className="App">
+            <ErrorSnackbar/>
             <AppBar position="static">
                 <Toolbar>
                     <IconButton
@@ -38,7 +43,7 @@ function App() {
                     </Typography>
                     <Button color="inherit">Login</Button>
                 </Toolbar>
-                <LinearProgress color={"secondary"}/>
+                {status === 'loading' && <LinearProgress color={"secondary"}/>}
             </AppBar>
             <Container fixed>
                 <TodolistsList/>
