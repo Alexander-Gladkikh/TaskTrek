@@ -1,13 +1,16 @@
 import {todolistAPI, TodolistType} from "../../../api/todolist-api";
 import {Dispatch} from "redux";
-import {RequestStatusType, setError, setErrorType, setStatus, setStatusType} from "../../../app/app-reducer";
+import {RequestStatusType, setError, SetErrorType, setStatus, SetStatusType} from "../../../app/app-reducer";
+import {handleServerAppError, handleServerNetworkError} from "../../../utils/error-utils";
+import {AxiosError} from "axios";
+import {ResultCode} from "./tasks-reducer";
 
 type ActionType = RemoveTodolistActionType |
     AddTodolistActionType |
     ChangeTodolistTitleActionType |
     ChangeTodolistFilterActionType |
     setTodolistsActionType
-    | setStatusType | changeTodolistsEntityStatusActionType | setErrorType;
+    | SetStatusType | changeTodolistsEntityStatusActionType | SetErrorType;
 // меня вызовут и дадут мне стейт (почти всегда объект)
 // и инструкцию (action, тоже объект)
 // согласно прописанному type в этом action (инструкции) я поменяю state
@@ -90,10 +93,10 @@ export const removeTodolistTC = (todolistId: string) => (dispatch: Dispatch<Acti
             }
         })
 
-        .catch(e => {
+        .catch((error: AxiosError<{message: string}>) => {
+            const err = error.response ? error.response.data.message : error.message
+            handleServerNetworkError(dispatch, err)
             dispatch(changeTodolistsEntityStatusAC(todolistId, 'idle'))
-            dispatch(setStatus('failed'))
-            dispatch(setError(e.message))
         })
 }
 
@@ -101,8 +104,15 @@ export const addTodolistTC = (title: string) => (dispatch: Dispatch<ActionType>)
     dispatch(setStatus('loading'))
     todolistAPI.createTodolist(title)
         .then(res => {
-            dispatch(addTodolistAC(res.data.data.item))
-            dispatch(setStatus('succeeded'))
+            if (res.data.resultCode === ResultCode.SUCCESS) {
+                dispatch(addTodolistAC(res.data.data.item))
+                dispatch(setStatus('succeeded'))
+            }else {
+                handleServerAppError<{item: TodolistType}>(dispatch, res.data)
+            }
+        })
+        .catch((e) => {
+          handleServerAppError(dispatch, e.message)
         })
 }
 
