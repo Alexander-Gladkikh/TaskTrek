@@ -28,6 +28,12 @@ export enum TaskPriorities {
     Later = 4
 }
 
+export enum ResultCode {
+    SUCCESS = 0,
+    ERROR = 1,
+    CAPTCHA = 10
+}
+
 export type TaskType = {
     description: string
     title: string
@@ -59,6 +65,18 @@ const instance = axios.create({
 
 })
 
+export type LoginType = {
+    email: string
+    password: string
+    rememberMe:  boolean
+    captcha?: string
+}
+
+export const authAPI = {
+    login(data: LoginType) {
+        return instance.post<LoginType,  AxiosResponse<ResponseType<{userId: number}>>>('auth/login', data)
+    }
+}
 export const todolistAPI = {
     getTodolist() {       //<ResponseType<[]>>
         return instance.get('/todo-lists')

@@ -1,9 +1,16 @@
 import {AddTodolistActionType, RemoveTodolistActionType, setTodolistsActionType} from "./todolists-reducer";
 import {Dispatch} from "redux";
-import {taskAPI, TaskPriorities, TaskStatuses, TaskType, UpdateTaskModelType} from "../../../api/todolist-api";
+import {
+    ResultCode,
+    taskAPI,
+    TaskPriorities,
+    TaskStatuses,
+    TaskType,
+    UpdateTaskModelType
+} from "../../../api/todolist-api";
 import {AppRootStateType} from "../../../app/store";
 import {TasksStateType} from "../../../app/App";
-import {setError, SetErrorType, setStatus, SetStatusType} from "../../../app/app-reducer";
+import {setErrorAC, SetErrorType, setStatusAC, SetStatusType} from "../../../app/app-reducer";
 import axios, {AxiosError} from "axios";
 import {handleServerAppError, handleServerNetworkError} from "../../../utils/error-utils";
 
@@ -85,28 +92,24 @@ export const setTasksAC = (tasks: TaskType[], todolistId: string) =>
     ({type: 'SET-TASKS', tasks, todolistId} as const)
 
 
-export enum ResultCode {
-    SUCCESS = 0,
-    ERROR = 1,
-    CAPTCHA = 10
-}
+
 
 export const getTasksTC = (todolistId: string) => (dispatch: Dispatch<ActionType>) => {
-    dispatch(setStatus('loading'))
+    dispatch(setStatusAC('loading'))
     taskAPI.getTask(todolistId)
         .then((res) => {
             dispatch(setTasksAC(res.data.items, todolistId))
-            dispatch(setStatus('succeeded'))
+            dispatch(setStatusAC('succeeded'))
         })
 }
 
 export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: Dispatch<ActionType>) => {
-    dispatch(setStatus('loading'))
+    dispatch(setStatusAC('loading'))
     taskAPI.deleteTask(todolistId, taskId)
         .then((res) => {
             if (res.data.resultCode === ResultCode.SUCCESS) {
                 dispatch(removeTaskAC(taskId, todolistId))
-                dispatch(setStatus('succeeded'))
+                dispatch(setStatusAC('succeeded'))
             }
         })
         .catch((e) => {
@@ -116,17 +119,17 @@ export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: D
 }
 
 export const addTaskTC = (todolistId: string, title: string) => async (dispatch: Dispatch<ActionType>) => {
-    dispatch(setStatus('loading'))
+    dispatch(setStatusAC('loading'))
     const res = await taskAPI.createTask(todolistId, title)
 
     try {
         if (res.data.resultCode === ResultCode.SUCCESS) {
             dispatch(addTaskAC(res.data.data.item))
-            dispatch(setStatus('succeeded'))
+            dispatch(setStatusAC('succeeded'))
         }
         else {
             handleServerAppError<{item: TaskType}>(dispatch, res.data)
-            dispatch(setStatus('failed'))
+            dispatch(setStatusAC('failed'))
         }
     } catch (e) {
         if(axios.isAxiosError<AxiosError<{message: string}>>(e)) {
@@ -138,7 +141,7 @@ export const addTaskTC = (todolistId: string, title: string) => async (dispatch:
 
 export const updateTaskTC = (todolistId: string, taskId: string, domainModel: UpdateDomainTaskModelType) =>
     (dispatch: Dispatch<ActionType>, getState: () => AppRootStateType) => {
-        dispatch(setStatus('loading'))
+        dispatch(setStatusAC('loading'))
         const state = getState()
         const task = state.tasks[todolistId].find(t => t.id === taskId)
         if (!task) {
@@ -162,11 +165,11 @@ export const updateTaskTC = (todolistId: string, taskId: string, domainModel: Up
                 if (res.data.resultCode === ResultCode.SUCCESS) {
                     const action = updateTaskAC(taskId, domainModel, todolistId)
                     dispatch(action)
-                    dispatch(setStatus('succeeded'))
+                    dispatch(setStatusAC('succeeded'))
                 }
                 else {
                     handleServerAppError<{item: TaskType}>(dispatch, res.data)
-                    dispatch(setStatus('failed'))
+                    dispatch(setStatusAC('failed'))
                 }
             })
             .catch((error: AxiosError<{message: string}>) => {

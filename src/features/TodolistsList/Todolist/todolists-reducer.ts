@@ -1,9 +1,9 @@
-import {todolistAPI, TodolistType} from "../../../api/todolist-api";
+import {ResultCode, todolistAPI, TodolistType} from "../../../api/todolist-api";
 import {Dispatch} from "redux";
-import {RequestStatusType, setError, SetErrorType, setStatus, SetStatusType} from "../../../app/app-reducer";
+import {RequestStatusType, setErrorAC, SetErrorType, setStatusAC, SetStatusType} from "../../../app/app-reducer";
 import {handleServerAppError, handleServerNetworkError} from "../../../utils/error-utils";
 import {AxiosError} from "axios";
-import {ResultCode} from "./tasks-reducer";
+
 
 type ActionType = RemoveTodolistActionType |
     AddTodolistActionType |
@@ -74,22 +74,22 @@ export const changeTodolistsEntityStatusAC = (todolistId: string, entityStatus: 
 
 // thunks
 export const getTodolistTC = () => (dispatch: Dispatch<ActionType>) => {
-    dispatch(setStatus('loading'))
+    dispatch(setStatusAC('loading'))
     todolistAPI.getTodolist()
         .then((res) => {
             dispatch(setTodolists(res.data))
-            dispatch(setStatus('succeeded'))
+            dispatch(setStatusAC('succeeded'))
         })
 }
 
 export const removeTodolistTC = (todolistId: string) => (dispatch: Dispatch<ActionType>) => {
-    dispatch(setStatus('loading'))
+    dispatch(setStatusAC('loading'))
     dispatch(changeTodolistsEntityStatusAC(todolistId, 'loading'))
     todolistAPI.deleteTodolist(todolistId)
         .then((res) => {
             if (res.data.resultCode === 0) {
                 dispatch(removeTodolistAC(todolistId))
-                dispatch(setStatus('succeeded'))
+                dispatch(setStatusAC('succeeded'))
             }
         })
 
@@ -101,12 +101,12 @@ export const removeTodolistTC = (todolistId: string) => (dispatch: Dispatch<Acti
 }
 
 export const addTodolistTC = (title: string) => (dispatch: Dispatch<ActionType>) => {
-    dispatch(setStatus('loading'))
+    dispatch(setStatusAC('loading'))
     todolistAPI.createTodolist(title)
         .then(res => {
             if (res.data.resultCode === ResultCode.SUCCESS) {
                 dispatch(addTodolistAC(res.data.data.item))
-                dispatch(setStatus('succeeded'))
+                dispatch(setStatusAC('succeeded'))
             }else {
                 handleServerAppError<{item: TodolistType}>(dispatch, res.data)
             }
@@ -117,11 +117,11 @@ export const addTodolistTC = (title: string) => (dispatch: Dispatch<ActionType>)
 }
 
 export const changeTodolistTitleTC = (newTitle: string, todolistId: string) => (dispatch: Dispatch<ActionType>) => {
-    dispatch(setStatus('loading'))
+    dispatch(setStatusAC('loading'))
     todolistAPI.updateTodolist(todolistId, newTitle)
         .then(res => {
             dispatch(changeTodolisTitletAC(todolistId, newTitle))
-            dispatch(setStatus('succeeded'))
+            dispatch(setStatusAC('succeeded'))
         })
 }
 
