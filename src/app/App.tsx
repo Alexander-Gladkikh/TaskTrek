@@ -12,6 +12,8 @@ import {TodolistsList} from "../features/TodolistsList/Todolists";
 import LinearProgress from "@mui/material/LinearProgress";
 import {useAppSelector} from "./store";
 import {ErrorSnackbar} from "../api/components/ErrorSnackbar/ErrorSnackbar";
+import {Login} from "../features/Login/Login";
+import {Navigate, Route, Routes} from "react-router-dom";
 
 
 export type TasksStateType = {
@@ -20,7 +22,7 @@ export type TasksStateType = {
 
 
 function App() {
-    const status =useAppSelector((state) => state.app.status)
+    const status = useAppSelector((state) => state.app.status)
 
 
     return (
@@ -42,10 +44,15 @@ function App() {
                     </Typography>
                     <Button color="inherit">Login</Button>
                 </Toolbar>
-                {status === 'loading' && <LinearProgress />}
+                {status === 'loading' && <LinearProgress/>}
             </AppBar>
             <Container fixed>
-                <TodolistsList/>
+                    <Routes>
+                        <Route path={'/'} element={<TodolistsList/>}/>
+                        <Route path={'/login'} element={<Login/>}/>
+                        <Route path={'/404'} element={<h1>404 NOT FOUND</h1>}/>
+                        <Route path={'*'} element={<Navigate to='/404'/>}/>
+                    </Routes>
             </Container>
         </div>
     );
