@@ -1,16 +1,14 @@
 import React, {ChangeEvent, useState} from 'react';
+import {log} from "util";
 
 type EditableSpanPropsType = {
     title : string
     onChangeTitle: (newTitle: string) => void
+    disabled? : boolean
 }
 
 export const EditableSpan = (props: EditableSpanPropsType) => {
-
-    //console.log('Editable called')
-
     let [editMode, setEditMode] = useState<boolean>(false)
-
 
     const activateEditMode = () => {
         setEditMode(true)

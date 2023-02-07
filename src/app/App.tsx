@@ -10,7 +10,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {TaskType} from "../api/todolist-api";
 import {TodolistsList} from "../features/TodolistsList/Todolists";
 import LinearProgress from "@mui/material/LinearProgress";
-import {useSelector} from "react-redux";
 import {useAppSelector} from "./store";
 import {ErrorSnackbar} from "../api/components/ErrorSnackbar/ErrorSnackbar";
 
