@@ -5,6 +5,8 @@ import App from "./app/App";
 import {Provider} from "react-redux";
 import {store} from "./app/store";
 import {BrowserRouter} from "react-router-dom";
+import {DevSupport} from "@react-buddy/ide-toolbox";
+import {ComponentPreviews, useInitial} from "./dev";
 
 
 const root = ReactDOM.createRoot(
@@ -14,7 +16,11 @@ root.render(
     <BrowserRouter>
         <React.StrictMode>
             <Provider store={store}>
-                <App/>
+                <DevSupport ComponentPreviews={ComponentPreviews}
+                            useInitialHook={useInitial}
+                >
+                    <App/>
+                </DevSupport>
             </Provider>
         </React.StrictMode>
     </BrowserRouter>
