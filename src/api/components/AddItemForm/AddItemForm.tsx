@@ -1,27 +1,29 @@
-import React, { ChangeEvent, useState } from "react";
-import { IconButton, TextField } from "@mui/material";
-import { AddBox } from "@mui/icons-material";
+import React, { ChangeEvent, useState } from 'react'
+
+import { AddBox } from '@mui/icons-material'
+import { IconButton, TextField } from '@mui/material'
 
 type AddItemFormPropsType = {
-  addItem: (title: string) => void;
-  disabled?: boolean;
-};
+  addItem: (title: string) => void
+  disabled?: boolean
+}
 export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
-  let [title, setTitle] = useState<string>("");
-  let [error, setError] = useState<string | null>(null);
+  let [title, setTitle] = useState<string>('')
+  let [error, setError] = useState<string | null>(null)
 
   const addItemHandler = () => {
-    if (title.trim() !== "") {
-      props.addItem(title.trim());
-      setTitle("");
+    if (title.trim() !== '') {
+      props.addItem(title.trim())
+      setTitle('')
     } else {
-      setError("Title is required");
+      setError('Title is required')
     }
-  };
+  }
 
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.currentTarget.value);
-  };
+    setTitle(e.currentTarget.value)
+  }
+
   // const onKeyPressHandler = (event: KeyboardEvent<HTMLInputElement>) => {
   //     if (error !== null) {
   //         setError(null)
@@ -42,13 +44,9 @@ export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
         helperText={error}
         disabled={props.disabled}
       />
-      <IconButton
-        color="primary"
-        onClick={addItemHandler}
-        disabled={props.disabled}
-      >
+      <IconButton color="primary" onClick={addItemHandler} disabled={props.disabled}>
         <AddBox />
       </IconButton>
     </div>
-  );
-});
+  )
+})
