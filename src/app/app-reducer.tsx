@@ -1,4 +1,4 @@
-import {bool} from "prop-types";
+import {createSlice} from "@reduxjs/toolkit";
 
 export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
 
@@ -8,7 +8,18 @@ const initialState = {
     error: null as null | string
 }
 
-export const appReducer = (state: InitialStateType = initialState, action: AppActionsType): InitialStateType => {
+const slice = createSlice({
+    name: 'app',
+    initialState,
+    reducers: {
+
+    }
+})
+
+export const appReducer = slice.reducer
+
+
+export const _appReducer = (state: InitialStateType = initialState, action: AppActionsType): InitialStateType => {
     switch (action.type) {
         case 'APP/SET-STATUS':
             return {...state, status: action.status}
