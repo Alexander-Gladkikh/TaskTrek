@@ -18,7 +18,7 @@ export function ErrorSnackbar(props: any) {
     if (reason === 'clickaway') {
       return
     }
-    dispatch(setErrorAC(null))
+    dispatch(setErrorAC({ error: null }))
   }
 
   return (

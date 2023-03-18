@@ -26,7 +26,7 @@ const slice = createSlice({
       }
     },
     addTodolistAC(state, action: PayloadAction<{ todolist: TodolistType }>) {
-      state.push({
+      state.unshift({
         ...action.payload.todolist,
         filter: 'all',
         entityStatus: 'idle',

@@ -76,5 +76,3 @@ export const meTC = () => async (dispatch: Dispatch) => {
     dispatch(setIsInitializedAC({ isInitialized: true }))
   }
 }
-
-// types

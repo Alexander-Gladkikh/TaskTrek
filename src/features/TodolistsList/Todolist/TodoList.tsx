@@ -26,12 +26,16 @@ type PropsType = {
   onChangeTaskTitle: (tasksId: string, newTitle: string, todolistId: string) => void
   removeTodolist: (todolistId: string) => void
   onChangeTodolistTitle: (newTitle: string, todolistId: string) => void
+  demo?: boolean
 }
 
-export const TodoList = React.memo((props: PropsType) => {
+export const TodoList = React.memo(function ({ demo = false, ...props }: PropsType) {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
+    if (demo) {
+      return
+    }
     dispatch(getTasksTC(props.id))
   }, [])
 

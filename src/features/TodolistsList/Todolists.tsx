@@ -20,14 +20,18 @@ import { TaskStatuses } from 'api/todolist-api'
 import { TasksStateType } from 'app/App'
 import { useAppDispatch, useAppSelector } from 'app/store'
 
-export const TodolistsList: React.FC = () => {
+type PropsType = {
+  demo?: boolean
+}
+
+export const TodolistsList: React.FC<PropsType> = ({ demo = false }) => {
   const todolists = useAppSelector<TodolistDomainType[]>(state => state.todolists)
   const tasks = useAppSelector<TasksStateType>(state => state.tasks)
   const dispatch = useAppDispatch()
   const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn)
 
   useEffect(() => {
-    if (!isLoggedIn) return
+    if (demo || !isLoggedIn) return
     dispatch(getTodolistTC())
   }, [])
 
@@ -49,7 +53,7 @@ export const TodolistsList: React.FC = () => {
   }, [])
 
   const changeFilter = useCallback((value: FilterValueType, todolistId: string) => {
-    dispatch(changeTodolistFilterAC(todolistId, value))
+    dispatch(changeTodolistFilterAC({ id: todolistId, filter: value }))
   }, [])
   const removeTodolist = useCallback((todolistId: string) => {
     dispatch(removeTodolistTC(todolistId))
@@ -89,6 +93,7 @@ export const TodolistsList: React.FC = () => {
                   removeTodolist={removeTodolist}
                   onChangeTodolistTitle={onChangeTodolistTitle}
                   filter={tl.filter}
+                  demo={demo}
                 />
               </Paper>
             </Grid>

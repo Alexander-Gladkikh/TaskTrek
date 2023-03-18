@@ -25,7 +25,11 @@ export type TasksStateType = {
   [key: string]: TaskType[]
 }
 
-function App() {
+type PropsType = {
+  demo?: boolean
+}
+
+function App({ demo = false }: PropsType) {
   const status = useAppSelector<RequestStatusType>(state => state.app.status)
   const isInitialized = useAppSelector<boolean>(state => state.app.isInitialized)
   const isLoggedIn = useAppSelector<boolean>(state => state.auth.isLoggedIn)
@@ -76,7 +80,7 @@ function App() {
       </AppBar>
       <Container fixed>
         <Routes>
-          <Route path={'/'} element={<TodolistsList />} />
+          <Route path={'/'} element={<TodolistsList demo={demo} />} />
           <Route path={'/login'} element={<Login />} />
           <Route path={'/404'} element={<h1>404 NOT FOUND</h1>} />
           <Route path={'*'} element={<Navigate to="/404" />} />
