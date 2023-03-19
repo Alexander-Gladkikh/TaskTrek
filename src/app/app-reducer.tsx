@@ -1,16 +1,34 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+
+import { authAPI, ResultCode } from 'api/todolist-api'
+import { setIsLoggedInAC } from 'features/Login/auth-reducer'
+import { handleServerAppError, handleServerNetworkError } from 'utils/error-utils'
 
 export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
 
-const initialState = {
-  isInitialized: false,
-  status: 'loading' as RequestStatusType,
-  error: null as null | string,
-}
+export const initializeAppTC = createAsyncThunk(
+  'app/initializeApp',
+  async (param, { dispatch }) => {
+    dispatch(setStatusAC({ status: 'loading' }))
+    const res = await authAPI.me()
+
+    if (res.data.resultCode === ResultCode.SUCCESS) {
+      dispatch(setIsLoggedInAC({ value: true }))
+
+      dispatch(setStatusAC({ status: 'succeeded' }))
+    }
+
+    return
+  }
+)
 
 const slice = createSlice({
   name: 'app',
-  initialState,
+  initialState: {
+    isInitialized: false,
+    status: 'loading' as RequestStatusType,
+    error: null as null | string,
+  },
   reducers: {
     setStatusAC(state, action: PayloadAction<{ status: RequestStatusType }>) {
       state.status = action.payload.status
@@ -18,11 +36,13 @@ const slice = createSlice({
     setErrorAC(state, action: PayloadAction<{ error: null | string }>) {
       state.error = action.payload.error
     },
-    setIsInitializedAC(state, action: PayloadAction<{ isInitialized: boolean }>) {
-      state.isInitialized = action.payload.isInitialized
-    },
+  },
+  extraReducers: builder => {
+    builder.addCase(initializeAppTC.fulfilled, state => {
+      state.isInitialized = true
+    })
   },
 })
 
 export const appReducer = slice.reducer
-export const { setStatusAC, setErrorAC, setIsInitializedAC } = slice.actions
+export const { setStatusAC, setErrorAC } = slice.actions
