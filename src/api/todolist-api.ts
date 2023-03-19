@@ -10,51 +10,45 @@ const instance = axios.create({
 
 export const authAPI = {
   login(data: LoginType) {
-    return instance.post<LoginType, AxiosResponse<ResponseType<{ userId: number }>>>(
-      'auth/login',
-      data
-    )
+    return instance.post<ResponseType<{ userId?: number }>>('auth/login', data)
   },
   logOut() {
-    return instance.delete('auth/login')
+    return instance.delete<ResponseType<{ userId?: number }>>('auth/login')
   },
   me() {
     return instance.get<ResponseType<UserType>>('auth/me')
   },
 }
+
 export const todolistAPI = {
   getTodolist() {
-    return instance.get('/todo-lists')
+    return instance.get<TodolistType[]>('/todo-lists')
   },
   createTodolist(title: string) {
-    return instance.post<{ title: string }, AxiosResponse<ResponseType<{ item: TodolistType }>>>(
-      'todo-lists',
-      { title }
-    )
+    return instance.post<ResponseType<{ item: TodolistType }>>('todo-lists', { title })
   },
   deleteTodolist(todolistId: string) {
-    return instance.delete<ResponseType<{}>>(`/todo-lists/${todolistId}`)
+    return instance.delete<ResponseType>(`/todo-lists/${todolistId}`)
   },
   updateTodolist(todolistId: string, title: string) {
-    return instance.put<{ title: string }, AxiosResponse<ResponseType<any>>>(
-      `/todo-lists/${todolistId}`,
-      { title }
-    )
+    return instance.put<ResponseType>(`/todo-lists/${todolistId}`, { title })
   },
 }
 
 export const taskAPI = {
   getTask(todolistId: string) {
-    return instance.get(`/todo-lists/${todolistId}/tasks`)
+    return instance.get<GetTasksResponse>(`/todo-lists/${todolistId}/tasks`)
   },
   createTask(todolistId: string, title: string) {
-    return instance.post(`/todo-lists/${todolistId}/tasks`, { title: title })
+    return instance.post<ResponseType<{ item: TaskType }>>(`/todo-lists/${todolistId}/tasks`, {
+      title: title,
+    })
   },
   deleteTask(todolistId: string, taskId: string) {
-    return instance.delete(`/todo-lists/${todolistId}/tasks/${taskId}`)
+    return instance.delete<ResponseType>(`/todo-lists/${todolistId}/tasks/${taskId}`)
   }, // UpdateTaskModuleType
   updateTask(todolistId: string, taskId: string, model: UpdateTaskModelType) {
-    return instance.put(`/todo-lists/${todolistId}/tasks/${taskId}`, model)
+    return instance.put<ResponseType<TaskType>>(`/todo-lists/${todolistId}/tasks/${taskId}`, model)
   },
 }
 
@@ -65,10 +59,11 @@ export type TodolistType = {
   order: number
 }
 
-export type ResponseType<D> = {
+export type FieldErrorType = { field: string; error: string }
+export type ResponseType<D = {}> = {
   resultCode: number
   messages: Array<string>
-  fieldsErrors: Array<string>
+  fieldsErrors?: Array<FieldErrorType>
   data: D
 }
 
@@ -125,4 +120,10 @@ export type UserType = {
   id: number
   email: string
   login: string
+}
+
+type GetTasksResponse = {
+  error: string | null
+  totalCount: number
+  items: TaskType[]
 }
