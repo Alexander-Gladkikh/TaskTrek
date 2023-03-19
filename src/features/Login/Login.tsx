@@ -8,7 +8,7 @@ import FormGroup from '@mui/material/FormGroup'
 import FormLabel from '@mui/material/FormLabel'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
-import { useFormik } from 'formik'
+import { FormikHelpers, useFormik } from 'formik'
 import { Navigate } from 'react-router-dom'
 
 import { loginTC } from './auth-reducer'
@@ -18,6 +18,12 @@ import { useAppDispatch, useAppSelector } from 'app/store'
 type FormikErrorType = {
   email?: string
   password?: string
+}
+
+type FormValuesType = {
+  email: string
+  password: string
+  rememberMe: boolean
 }
 
 export const Login = () => {
@@ -47,17 +53,22 @@ export const Login = () => {
 
       return errors
     },
-    onSubmit: values => {
-      dispatch(loginTC(values))
-      formik.resetForm()
+    onSubmit: async (values, formikHelpers: FormikHelpers<FormValuesType>) => {
+      const action = await dispatch(loginTC(values))
+
+      if (loginTC.rejected.match(action)) {
+        if (action.payload?.fieldsErrors?.length) {
+          const error = action.payload?.fieldsErrors[0]
+
+          formikHelpers.setFieldError(error.field, error.error)
+        }
+      }
     },
   })
 
   if (isLoggedIn) {
     return <Navigate to={'/'} />
   }
-
-  //console.log(formik.values)
 
   return (
     <Grid container justifyContent={'center'}>

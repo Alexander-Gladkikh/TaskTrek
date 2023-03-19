@@ -12,12 +12,12 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
-import { RequestStatusType } from './app-reducer'
+import { initializeAppTC, RequestStatusType } from './app-reducer'
 import { useAppDispatch, useAppSelector } from './store'
 
 import { ErrorSnackbar } from 'api/components/ErrorSnackbar/ErrorSnackbar'
 import { TaskType } from 'api/todolist-api'
-import { logOutTC, meTC } from 'features/Login/auth-reducer'
+import { logOutTC } from 'features/Login/auth-reducer'
 import { Login } from 'features/Login/Login'
 import { TodolistsList } from 'features/TodolistsList/Todolists'
 
@@ -40,7 +40,7 @@ function App({ demo = false }: PropsType) {
   }
 
   useEffect(() => {
-    dispatch(meTC())
+    dispatch(initializeAppTC())
   }, [])
 
   if (!isInitialized) {
