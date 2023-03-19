@@ -1,21 +1,76 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Dispatch } from 'redux'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { authAPI, LoginType, ResultCode } from 'api/todolist-api'
-import { setIsInitializedAC, setStatusAC } from 'app/app-reducer'
+import { authAPI, FieldErrorType, LoginType, ResultCode } from 'api/todolist-api'
+import { setStatusAC } from 'app/app-reducer'
 import { handleServerAppError, handleServerNetworkError } from 'utils/error-utils'
 
-const initialState = {
-  isLoggedIn: false,
-}
+export const loginTC = createAsyncThunk<
+  undefined,
+  LoginType,
+  { rejectValue: { errors: Array<string>; fieldsErrors?: Array<FieldErrorType> } }
+>('auth/login', async (param, thunkAPI) => {
+  thunkAPI.dispatch(setStatusAC({ status: 'loading' }))
+  try {
+    const res = await authAPI.login(param)
+
+    if (res.data.resultCode === ResultCode.SUCCESS) {
+      thunkAPI.dispatch(setStatusAC({ status: 'succeeded' }))
+
+      return
+    } else {
+      handleServerAppError(thunkAPI.dispatch, res.data)
+
+      return thunkAPI.rejectWithValue({
+        errors: res.data.messages,
+        fieldsErrors: res.data.fieldsErrors,
+      })
+    }
+  } catch (error: any) {
+    handleServerNetworkError(thunkAPI.dispatch, error)
+
+    return thunkAPI.rejectWithValue({ errors: [error.message], fieldsErrors: undefined })
+  }
+})
+
+export const logOutTC = createAsyncThunk('auth/logout', async (param, thunkAPI) => {
+  thunkAPI.dispatch(setStatusAC({ status: 'loading' }))
+  try {
+    const res = await authAPI.logOut()
+
+    if (res.data.resultCode === ResultCode.SUCCESS) {
+      thunkAPI.dispatch(setStatusAC({ status: 'succeeded' }))
+
+      return
+    } else {
+      handleServerAppError(thunkAPI.dispatch, res.data)
+
+      return thunkAPI.rejectWithValue({})
+    }
+  } catch (e) {
+    // @ts-ignore
+    handleServerNetworkError(dispatch, e)
+
+    return thunkAPI.rejectWithValue({})
+  }
+})
 
 const slice = createSlice({
   name: 'auth',
-  initialState: initialState,
+  initialState: {
+    isLoggedIn: false,
+  },
   reducers: {
     setIsLoggedInAC(state: any, action: PayloadAction<{ value: boolean }>) {
       state.isLoggedIn = action.payload.value
     },
+  },
+  extraReducers: builder => {
+    builder.addCase(loginTC.fulfilled, (state, action) => {
+      state.isLoggedIn = true
+    })
+    builder.addCase(logOutTC.fulfilled, (state, action) => {
+      state.isLoggedIn = false
+    })
   },
 })
 
@@ -23,56 +78,3 @@ export const authReducer = slice.reducer
 export const { setIsLoggedInAC } = slice.actions
 
 // thunks
-export const loginTC = (data: LoginType) => async (dispatch: Dispatch) => {
-  dispatch(setStatusAC({ status: 'loading' }))
-  try {
-    const res = await authAPI.login(data)
-
-    if (res.data.resultCode === ResultCode.SUCCESS) {
-      dispatch(setIsLoggedInAC({ value: true }))
-      dispatch(setStatusAC({ status: 'succeeded' }))
-    } else {
-      handleServerAppError(dispatch, res.data)
-    }
-  } catch (e) {
-    // @ts-ignore
-    handleServerNetworkError(dispatch, e)
-  }
-}
-
-export const logOutTC = () => async (dispatch: Dispatch) => {
-  dispatch(setStatusAC({ status: 'loading' }))
-  try {
-    const res = await authAPI.logOut()
-
-    if (res.data.resultCode === ResultCode.SUCCESS) {
-      dispatch(setIsLoggedInAC({ value: false }))
-      dispatch(setStatusAC({ status: 'succeeded' }))
-    } else {
-      handleServerAppError(dispatch, res.data)
-    }
-  } catch (e) {
-    // @ts-ignore
-    handleServerNetworkError(dispatch, e)
-  }
-}
-
-export const meTC = () => async (dispatch: Dispatch) => {
-  dispatch(setStatusAC({ status: 'loading' }))
-  try {
-    const res = await authAPI.me()
-
-    if (res.data.resultCode === ResultCode.SUCCESS) {
-      dispatch(setIsLoggedInAC({ value: true }))
-
-      dispatch(setStatusAC({ status: 'succeeded' }))
-    } else {
-      handleServerAppError(dispatch, res.data)
-    }
-  } catch (e) {
-    // @ts-ignore
-    handleServerNetworkError(dispatch, e)
-  } finally {
-    dispatch(setIsInitializedAC({ isInitialized: true }))
-  }
-}
