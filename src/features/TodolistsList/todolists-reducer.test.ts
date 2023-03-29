@@ -1,18 +1,20 @@
 import { v1 } from 'uuid'
 
-import { TodolistType } from 'api/todolist-api'
-import { RequestStatusType } from 'app/app-reducer'
+import { RequestStatusType } from '../Application/application-reducer'
+
+import { todolistsActions } from './'
+
+import { TodolistType } from 'api/types'
 import {
-  addTodolistTC,
-  changeTodolistFilterAC,
-  changeTodolistsEntityStatusAC,
-  changeTodolistTitleTC,
+  changeTodolistFilter,
+  changeTodolistsEntityStatus,
   FilterValueType,
-  getTodolistTC,
-  removeTodolistTC,
+  slice,
   TodolistDomainType,
-  todolistsReducer,
-} from 'features/TodolistsList/Todolist/todolists-reducer'
+} from 'features/TodolistsList/todolists-reducer'
+
+const todolistsReducer = slice.reducer
+const { addTodolist, fetchTodolists, changeTodolistTitle, removeTodolist } = todolistsActions
 
 let todolistId1: string
 let todolistId2: string
@@ -44,7 +46,7 @@ beforeEach(() => {
 test('correct todolist should be removed', () => {
   const endState = todolistsReducer(
     startState,
-    removeTodolistTC.fulfilled({ todolistId: todolistId1 }, 'requestId', todolistId1)
+    removeTodolist.fulfilled({ id: todolistId1 }, 'requestId', todolistId1)
   )
 
   expect(endState.length).toBe(1)
@@ -61,7 +63,7 @@ test('correct todolist should be added', () => {
 
   const endState = todolistsReducer(
     startState,
-    addTodolistTC.fulfilled({ todolist: todolist }, 'requestId', todolist.title)
+    addTodolist.fulfilled({ todolist }, 'requestId', todolist.title)
   )
 
   expect(endState.length).toBe(3)
@@ -72,11 +74,8 @@ test('correct todolist should be added', () => {
 test('correct todolist should change its name', () => {
   let newTodolistTitle = 'New Todolist'
 
-  let payload = { id: todolistId2, title: newTodolistTitle }
-  const action = changeTodolistTitleTC.fulfilled(payload, 'requestId', {
-    newTitle: newTodolistTitle,
-    todolistId: todolistId2,
-  })
+  let payload = { todolistId: todolistId2, newTitle: newTodolistTitle }
+  const action = changeTodolistTitle.fulfilled(payload, 'requestId', payload)
 
   const endState = todolistsReducer(startState, action)
 
@@ -87,7 +86,7 @@ test('correct todolist should change its name', () => {
 test('correct filter of todolist should be changed', () => {
   let newFilter: FilterValueType = 'completed'
 
-  const action = changeTodolistFilterAC({ id: todolistId2, filter: newFilter })
+  const action = changeTodolistFilter({ id: todolistId2, filter: newFilter })
 
   const endState = todolistsReducer(startState, action)
 
@@ -95,8 +94,8 @@ test('correct filter of todolist should be changed', () => {
   expect(endState[1].filter).toBe(newFilter)
 })
 test('todolists should be added', () => {
-  const payload = { todolists: startState }
-  const action = getTodolistTC.fulfilled(payload, 'requestId')
+  let payload = { todolists: startState }
+  const action = fetchTodolists.fulfilled(payload, 'requestId', undefined)
 
   const endState = todolistsReducer([], action)
 
@@ -105,7 +104,7 @@ test('todolists should be added', () => {
 test('correct entity status of todolist should be changed', () => {
   let newStatus: RequestStatusType = 'loading'
 
-  const action = changeTodolistsEntityStatusAC({ todolistId: todolistId2, entityStatus: newStatus })
+  const action = changeTodolistsEntityStatus({ todolistId: todolistId2, entityStatus: newStatus })
 
   const endState = todolistsReducer(startState, action)
 
