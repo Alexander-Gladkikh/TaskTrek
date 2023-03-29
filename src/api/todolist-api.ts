@@ -1,4 +1,5 @@
 import axios from 'axios'
+
 import {
   GetTasksResponse,
   LoginParamsType,
@@ -6,8 +7,8 @@ import {
   TaskType,
   TodolistType,
   UpdateTaskModelType,
-  UserType
-} from "api/types";
+  UserType,
+} from 'api/types'
 
 const settings = {
   withCredentials: true,
@@ -18,14 +19,14 @@ const settings = {
 
 const instance = axios.create({
   baseURL: 'https://social-network.samuraijs.com/api/1.1',
-  ...settings
+  ...settings,
 })
 
 export const authAPI = {
   login(data: LoginParamsType) {
     return instance.post<ResponseType<{ userId?: number }>>('auth/login', data)
   },
-  logOut() {
+  logout() {
     return instance.delete<ResponseType<{ userId?: number }>>('auth/login')
   },
   me() {
@@ -64,5 +65,3 @@ export const taskAPI = {
     return instance.put<ResponseType<TaskType>>(`/todo-lists/${todolistId}/tasks/${taskId}`, model)
   },
 }
-
-
