@@ -1,31 +1,35 @@
-import React from 'react'
+import * as React from 'react'
 
-import MuiAlert, { AlertProps } from '@mui/material/Alert'
-import Snackbar from '@mui/material/Snackbar'
+import { Snackbar, Alert, AlertProps } from '@mui/material'
+import { SnackbarCloseReason } from '@mui/material/Snackbar/Snackbar'
+import { useSelector } from 'react-redux'
 
-import { setErrorAC } from 'app/app-reducer'
-import { useAppDispatch, useAppSelector } from 'app/store'
+import { appActions } from 'features/CommonActions/App'
+import { useActions } from 'utils/redux-utils'
+import { AppRootStateType } from 'utils/types'
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
-})
+function AlertComponent(props: AlertProps) {
+  return <Alert elevation={6} variant="filled" {...props} />
+}
 
-export function ErrorSnackbar(props: any) {
-  const error = useAppSelector(state => state.app.error)
-  const dispatch = useAppDispatch()
+export function ErrorSnackbar() {
+  const error = useSelector<AppRootStateType, string | null>(state => state.app.error)
+  const { setAppError } = useActions(appActions)
 
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+  const handleClose = (event: React.SyntheticEvent<any> | Event, reason?: SnackbarCloseReason) => {
     if (reason === 'clickaway') {
       return
     }
-    dispatch(setErrorAC({ error: null }))
+    setAppError({ error: null })
   }
 
+  const isOpen = error !== null
+
   return (
-    <Snackbar open={!!error} autoHideDuration={1000} onClose={handleClose}>
-      <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+    <Snackbar open={isOpen} autoHideDuration={6000} onClose={handleClose}>
+      <AlertComponent onClose={handleClose} severity="error">
         {error}
-      </Alert>
+      </AlertComponent>
     </Snackbar>
   )
 }

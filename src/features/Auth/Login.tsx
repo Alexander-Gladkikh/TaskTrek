@@ -11,9 +11,10 @@ import TextField from '@mui/material/TextField'
 import { FormikHelpers, useFormik } from 'formik'
 import { Navigate } from 'react-router-dom'
 
-import { loginTC } from './auth-reducer'
+import { login } from './auth-reducer'
 
 import { useAppDispatch, useAppSelector } from 'app/store'
+import { selectIsLoggedIn } from 'features/Auth/selectors'
 
 type FormikErrorType = {
   email?: string
@@ -28,7 +29,7 @@ type FormValuesType = {
 
 export const Login = () => {
   const dispatch = useAppDispatch()
-  const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn)
+  const isLoggedIn = useAppSelector(selectIsLoggedIn)
 
   const formik = useFormik({
     initialValues: {
@@ -54,9 +55,9 @@ export const Login = () => {
       return errors
     },
     onSubmit: async (values, formikHelpers: FormikHelpers<FormValuesType>) => {
-      const action = await dispatch(loginTC(values))
+      const action = await dispatch(login(values))
 
-      if (loginTC.rejected.match(action)) {
+      if (login.rejected.match(action)) {
         if (action.payload?.fieldsErrors?.length) {
           const error = action.payload?.fieldsErrors[0]
 
