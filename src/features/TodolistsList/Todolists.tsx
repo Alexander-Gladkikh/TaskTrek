@@ -15,7 +15,7 @@ import {
   TodolistDomainType,
 } from './Todolist/todolists-reducer'
 
-import { AddItemForm } from 'api/components/AddItemForm/AddItemForm'
+import { AddItemForm } from 'components/AddItemForm/AddItemForm'
 import { TaskStatuses } from 'api/todolist-api'
 import { TasksStateType } from 'app/App'
 import { useAppDispatch, useAppSelector } from 'app/store'

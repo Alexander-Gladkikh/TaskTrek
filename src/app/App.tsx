@@ -15,7 +15,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { initializeAppTC, RequestStatusType } from './app-reducer'
 import { useAppDispatch, useAppSelector } from './store'
 
-import { ErrorSnackbar } from 'api/components/ErrorSnackbar/ErrorSnackbar'
+import { ErrorSnackbar } from 'components/ErrorSnackbar/ErrorSnackbar'
 import { TaskType } from 'api/todolist-api'
 import { logOutTC } from 'features/Login/auth-reducer'
 import { Login } from 'features/Login/Login'

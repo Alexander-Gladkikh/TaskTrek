@@ -3,7 +3,7 @@ import React, { ChangeEvent, useCallback } from 'react'
 import { Delete } from '@mui/icons-material'
 import { Checkbox, IconButton } from '@mui/material'
 
-import { EditableSpan } from 'api/components/EditableSpan/EditableSpan'
+import { EditableSpan } from 'components/EditableSpan/EditableSpan'
 import { TaskStatuses, TaskType } from 'api/todolist-api'
 
 type TaskPropsType = {
