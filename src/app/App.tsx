@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 
-import './App.css'
 import MenuIcon from '@mui/icons-material/Menu'
 import { CircularProgress } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
@@ -10,37 +9,39 @@ import IconButton from '@mui/material/IconButton'
 import LinearProgress from '@mui/material/LinearProgress'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 
-import { initializeAppTC, RequestStatusType } from './app-reducer'
-import { useAppDispatch, useAppSelector } from './store'
+import { useAppSelector } from './store'
 
 import { ErrorSnackbar } from 'components/ErrorSnackbar/ErrorSnackbar'
-import { TaskType } from 'api/todolist-api'
-import { logOutTC } from 'features/Login/auth-reducer'
-import { Login } from 'features/Login/Login'
+import { appActions } from 'features/Application'
+import { RequestStatusType } from 'features/Application/application-reducer'
+import { selectIsInitialized, selectStatus } from 'features/Application/selectors'
+import { authActions, authSelectors } from 'features/Auth'
+import { Login } from 'features/Auth/Login'
 import { TodolistsList } from 'features/TodolistsList/Todolists'
-
-export type TasksStateType = {
-  [key: string]: TaskType[]
-}
+import { useActions } from 'utils/redux-utils'
 
 type PropsType = {
   demo?: boolean
 }
 
 function App({ demo = false }: PropsType) {
-  const status = useAppSelector<RequestStatusType>(state => state.app.status)
-  const isInitialized = useAppSelector<boolean>(state => state.app.isInitialized)
-  const isLoggedIn = useAppSelector<boolean>(state => state.auth.isLoggedIn)
-  const dispatch = useAppDispatch()
+  const status = useAppSelector<RequestStatusType>(selectStatus)
+  const isInitialized = useAppSelector<boolean>(selectIsInitialized)
+  const isLoggedIn = useAppSelector<boolean>(authSelectors.selectIsLoggedIn)
 
-  const logOutHandler = () => {
-    dispatch(logOutTC())
-  }
+  const { logout } = useActions(authActions)
+  const { initializeApp } = useActions(appActions)
 
   useEffect(() => {
-    dispatch(initializeAppTC())
+    if (!demo) {
+      initializeApp()
+    }
+  }, [])
+
+  const logOutHandler = useCallback(() => {
+    logout()
   }, [])
 
   if (!isInitialized) {
@@ -82,8 +83,6 @@ function App({ demo = false }: PropsType) {
         <Routes>
           <Route path={'/'} element={<TodolistsList demo={demo} />} />
           <Route path={'/login'} element={<Login />} />
-          <Route path={'/404'} element={<h1>404 NOT FOUND</h1>} />
-          <Route path={'*'} element={<Navigate to="/404" />} />
         </Routes>
       </Container>
     </div>
