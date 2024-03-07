@@ -1,46 +1,44 @@
-# Getting Started with Create React App
+![task-manager](https://user-images.githubusercontent.com/108129716/232459879-a3fcdfcf-98e5-4e4a-a1e0-77bcf03491f5.gif)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Менеджер задач
 
-## Available Scripts
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![Redux](https://img.shields.io/badge/redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
+![MUI](https://img.shields.io/badge/MUI-%230081CB.svg?style=for-the-badge&logo=mui&logoColor=white)
+<img src="https://camo.githubusercontent.com/47de54deba036c05a099df8357536de66379c93b53421ea87d777114aa60402b/68747470733a2f2f696d672e737461636b73686172652e696f2f736572766963652f383834362f707265766965772e706e67" width='40' height='30' />
 
-In the project directory, you can run:
 
-### `yarn start`
+## Описание
+Проект написан на React Typescript с UI-библиотекой Material Design. В приложении реализованы базовые CRUD операции.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Что реализовано?
+**Логинизация**
+- Вход и выход
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+**Главная страница**
+- Добавление/обновление/удаление списка задач
+- Добавление/обновление/удаление задач
+- Фильтрация
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## В проекте используются библиотеки
+- React
+- Redux toolkit
+- React-Redux
+- React-Router-dom
+- Axios
+- Formik
+- Material UI
+  
+## Storybook
 
-### `yarn build`
+В проекте для каждого компонента описываются стори-кейсы.
+Запросы на сервер мокаются с помощью storybook-addon-mock.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Файл со сторикейсами создает рядом с компонентом с расширением .stories.tsx
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Запустить сторибук можно командой:
+- `npm run storybook`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Подробнее о [Storybook](/docs/storybook.md)
